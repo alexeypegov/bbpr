@@ -24,7 +24,7 @@ function drawIcon(text, size, colors) {
 	      ctx.msBackingStorePixelRatio ||
 	      ctx.oBackingStorePixelRatio ||
 	      ctx.backingStorePixelRatio || 1;
-	      
+
 	const dpr = window.devicePixelRatio || 1;
 
 	const ratio = dpr / bspr;
@@ -48,8 +48,8 @@ function drawIcon(text, size, colors) {
 	ctx.fillStyle = colors.text;
 	ctx.textBaseline = 'middle';
 
-	const x = size / 2 - metrics.width / 2;
-	const y = size / 2;
+	const x = Math.floor(size / 2 - metrics.width / 2) + 0.5;
+	const y = Math.floor(size / 2);
 	ctx.fillText(text, x, y);
 
 	return ctx.getImageData(0, 0, size - 1, size - 1);
@@ -89,7 +89,7 @@ function doRequest(url) {
 	xhr.open('GET', url, true);
 
 	try {
-		xhr.send();			
+		xhr.send();
 	} catch(e) {
 		reportState(e.message, ':(');
 	}
@@ -106,8 +106,8 @@ function reportState(text, icon) {
 chrome.storage.onChanged.addListener(function(changes, namespace) {
 	if (SERVER_KEY in changes) {
 		const change = changes[SERVER_KEY];
-		chrome.alarms.create(NAME, { 
-			when: Date.now() 
+		chrome.alarms.create(NAME, {
+			when: Date.now()
 		});
 	}
 });
@@ -119,10 +119,10 @@ function getAndRequest() {
 			if (serverUrl && serverUrl.trim().length > 0) {
 				doRequest(`${serverUrl.trim()}${PATH}`);
 				return;
-			} 
-		} 
+			}
+		}
 
-		reportState(`server url is bad or not defined`, ';(');
+		reportState(`server url is bad or not defined`, '?(');
 	});
 }
 
