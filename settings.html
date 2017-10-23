@@ -1,0 +1,52 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>BitBucker PR extension configuration</title>
+	<style type="text/css">
+	#settings {
+		width: 400px;
+	}
+
+	#settings input[type=text] {
+		border: 1px solid #bbb;
+		font-size: larger;
+		padding: 4px 6px;
+		outline: none;
+	}
+
+	#settings input[type=text]:focus {
+		border: 1px solid #88f;
+	}
+
+	#settings input[type=button] {
+		font-size: 24px;
+		margin-left: 10px;
+	}
+
+	label {
+		display: inline-block;
+		color: #999;
+		padding-top: 5px;
+	}
+
+	input[type=text]#server.wrong {
+		border-color: #f00;
+	}
+
+	input[type=text]#server.good {
+		border-color: #0f0;
+	}
+	</style>
+</head>
+
+<body>
+	<h1>BitBucket Open PRs Count</h1>
+	<div id="settings">
+		<input type="text" placeholder="http://bb.yourcompany.com" name="server" size="35" id="server"/><input type="button" value="Save" id="save"/>
+		<label for="server">Your BitBucked Server base URL</label>
+	</div>
+  <script src="js/config.js"></script>
+</body>
+</html>

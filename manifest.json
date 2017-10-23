@@ -1,0 +1,23 @@
+{
+	"manifest_version": 2,
+	"name": "BitBucket Open PRs count",
+	"description": "This extension will show you a number of opened PRs assigned to you",
+	"version": "1.0",
+
+	"browser_action": {
+		"default_title": "",
+		"default_popup": "settings.html"
+	},
+
+	"permissions": [
+		"storage",
+		"alarms",
+		"https://*/",
+		"http://*/"
+	],
+
+	"background": {
+		"scripts": ["js/poll.js"],
+		"persistent": false
+	}
+}
