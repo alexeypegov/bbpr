@@ -1,4 +1,3 @@
-const NAME = 'bbpr';
 const FONT = 'Lucida Sans Unicode, sans-serif';
 const PATH = '/rest/api/1.0/dashboard/pull-requests?state=open&role=reviewer';
 const SERVER_KEY = 'bbpr-server';
@@ -108,16 +107,7 @@ function reportState(text, icon) {
   icon && updateIcon(icon, EMPTY);
 }
 
-chrome.storage.onChanged.addListener(function(changes, namespace) {
-  if (SERVER_KEY in changes) {
-    const change = changes[SERVER_KEY];
-    chrome.alarms.create(NAME, {
-      when: Date.now()
-    });
-  }
-});
-
-function getAndRequest() {
+function onPoll() {
   chrome.storage.local.get(SERVER_KEY, function(values) {
     if (values.hasOwnProperty(SERVER_KEY)) {
       const serverUrl = values[SERVER_KEY];
@@ -131,14 +121,26 @@ function getAndRequest() {
   });
 }
 
-chrome.alarms.onAlarm.addListener(function(alarm) {
-  if (alarm.name === NAME) {
-    getAndRequest();
+chrome.alarms.onAlarm.addListener(onPoll);
+chrome.runtime.onStartup.addListener(onPoll);
+
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+  if (SERVER_KEY in changes) {
+    onPoll();
   }
 });
 
-chrome.alarms.create(NAME, {
-  periodInMinutes: 10
+chrome.browserAction.onClicked.addListener(function(tab) {
+  chrome.storage.local.get(SERVER_KEY, function(values) {
+    const url = values[SERVER_KEY];
+    if (url && url.trim().length > 0) {
+      chrome.tabs.update(tab.id, {url: url});
+    }
+  });
 });
 
-getAndRequest();
+chrome.runtime.onInstalled.addListener(function() {
+  chrome.alarms.create('poll', {
+    periodInMinutes: 10
+  });
+});
