@@ -2,61 +2,61 @@
 
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<title>BitBucker PR extension configuration</title>
-	<style type="text/css">
-	#settings {
-		width: 400px;
-	}
+  <meta charset="utf-8">
+  <title>BitBucker PR extension configuration</title>
+  <style type="text/css">
+  #settings {
+    width: 400px;
+  }
 
-	#settings input[type=text] {
-		border: 1px solid #bbb;
-		font-size: larger;
-		padding: 4px 6px;
-		outline: none;
-		margin-right: 10px;
-	}
+  #settings input[type=text] {
+    border: 1px solid #bbb;
+    font-size: larger;
+    padding: 4px 6px;
+    outline: none;
+    margin-right: 10px;
+  }
 
-	#settings input[type=text]:focus {
-		border: 1px solid #88f;
-	}
+  #settings input[type=text]:focus {
+    border: 1px solid #88f;
+  }
 
-	#settings input[type=button] {
-		font-size: larger;
-	}
+  #settings input[type=button] {
+    font-size: larger;
+  }
 
-	label {
-		display: inline-block;
-		color: #999;
-		padding-top: 5px;
-	}
+  label {
+    display: inline-block;
+    color: #999;
+    padding-top: 5px;
+  }
 
-	input[type=text]#server.wrong {
-		border-color: #f00;
-	}
+  input[type=text]#server.wrong {
+    border-color: #f00;
+  }
 
-	input[type=text]#server.good {
-		border-color: #0f0;
-	}
+  input[type=text]#server.good {
+    border-color: #0f0;
+  }
 
-	#stats {
-		text-align: right;
-		padding-top: 10px;
-		font-size: smaller;
-		color: #bbb;
-	}
-	</style>
+  #stats {
+    text-align: right;
+    padding-top: 10px;
+    font-size: smaller;
+    color: #bbb;
+  }
+  </style>
 </head>
 
 <body>
-	<h1>BitBucket Open PRs Count</h1>
-	<div id="settings">
-		<input type="text" placeholder="http://bb.yourcompany.com" name="server" size="35" id="server"/><input type="button" value="Save" id="save"/>
-		<label for="server">Your BitBucked Server base URL</label>
-	</div>
-	<div id="stats">
-		<span id="lastCheck">Last run: never</span>
-	</div>
+  <h1>BitBucket Open PRs Count</h1>
+  <div id="settings">
+    <input type="text" placeholder="http://bb.yourcompany.com" name="server" size="35" id="server"/><input type="button" value="Save" id="save"/>
+    <label for="server">Your BitBucked Server base URL</label>
+  </div>
+  <div id="stats">
+    <span id="lastCheck">Last run: never</span>
+  </div>
   <script src="js/config.js"></script>
 </body>
 </html>
