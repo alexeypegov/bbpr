@@ -3,11 +3,10 @@
 	"name": "BitBucket Open PRs count",
 	"short_name": "BBPR",
 	"description": "This extension will show you a number of opened PRs assigned to you",
-	"version": "1.0",
+	"version": "1.0.1",
 
 	"browser_action": {
-		"default_title": "",
-		"default_popup": "settings.html"
+		"default_title": ""
 	},
 
 	"icons": {
@@ -23,8 +22,13 @@
 		"http://*/"
 	],
 
+	"options_ui": {
+    "chrome_style": true,
+    "page": "settings.html"
+  },
+
 	"background": {
-		"scripts": ["js/poll.js"],
+		"scripts": ["js/poll.js", "js/bootstrap.js"],
 		"persistent": false
 	}
 }

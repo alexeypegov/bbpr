@@ -1,10 +1,18 @@
 const SERVER_KEY = 'bbpr-server';
 const serverElement = document.getElementById('server');
+const LAST_CHECKED = 'bbpr-last';
 
 chrome.storage.local.get(SERVER_KEY, function(values) {
 	if (values[SERVER_KEY]) {
 		serverElement.value = values[SERVER_KEY];
 		serverElement.setAttribute('class', 'good');
+	}
+});
+
+chrome.storage.local.get(LAST_CHECKED, function(values) {
+	if (values[LAST_CHECKED]) {
+		const formatTime = Math.ceil((Date.now() - values[LAST_CHECKED]) / 60000);
+		document.getElementById('lastCheck').innerHTML = `Last run: ${formatTime} minute(s) ago`;
 	}
 });
 

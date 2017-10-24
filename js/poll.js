@@ -2,6 +2,7 @@ const NAME = 'bbpr';
 const FONT = 'Lucida Sans Unicode, sans-serif';
 const PATH = '/rest/api/1.0/dashboard/pull-requests?state=open&role=reviewer';
 const SERVER_KEY = 'bbpr-server';
+const LAST_CHECKED = 'bbpr-last';
 
 const OPEN = {
 	bg: 'rgba(255, 70, 70, 255)',
@@ -78,6 +79,10 @@ function doRequest(url) {
 			} else {
 				reportState(`something went wrong, status = ${this.status}`, ':P');
 			}
+
+			const lastRun = {};
+			lastRun[LAST_CHECKED] = Date.now();
+			chrome.storage.local.set(lastRun);
 		}
 	};
 

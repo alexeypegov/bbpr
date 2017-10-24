@@ -14,6 +14,7 @@
 		font-size: larger;
 		padding: 4px 6px;
 		outline: none;
+		margin-right: 10px;
 	}
 
 	#settings input[type=text]:focus {
@@ -21,8 +22,7 @@
 	}
 
 	#settings input[type=button] {
-		font-size: 24px;
-		margin-left: 10px;
+		font-size: larger;
 	}
 
 	label {
@@ -38,6 +38,13 @@
 	input[type=text]#server.good {
 		border-color: #0f0;
 	}
+
+	#stats {
+		text-align: right;
+		padding-top: 10px;
+		font-size: smaller;
+		color: #bbb;
+	}
 	</style>
 </head>
 
@@ -46,6 +53,9 @@
 	<div id="settings">
 		<input type="text" placeholder="http://bb.yourcompany.com" name="server" size="35" id="server"/><input type="button" value="Save" id="save"/>
 		<label for="server">Your BitBucked Server base URL</label>
+	</div>
+	<div id="stats">
+		<span id="lastCheck">Last run: never</span>
 	</div>
   <script src="js/config.js"></script>
 </body>
