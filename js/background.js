@@ -116,6 +116,7 @@ function onPoll() {
 
     if (serverUrl && serverUrl.length > 0) {
       doRequest(`${serverUrl}${PATH}${excludeNeedsWork ? EXCLUDE_NEEDS_WORK_POSTFIX : ''}`);
+      return;
     }
 
     reportState(`server url is bad or not defined`, '?(');
