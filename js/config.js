@@ -1,6 +1,7 @@
 const SERVER_KEY = 'bbpr-server';
 const serverElement = document.getElementById('server');
 const LAST_CHECKED = 'bbpr-last';
+const EXCLUDE_NEEDS_WORK = 'exclude-needs-work';
 
 chrome.storage.local.get(SERVER_KEY, function(values) {
   if (values[SERVER_KEY]) {
@@ -9,11 +10,20 @@ chrome.storage.local.get(SERVER_KEY, function(values) {
   }
 });
 
-chrome.storage.local.get(LAST_CHECKED, function(values) {
+const needsWork = document.getElementById('needsWork');
+needsWork.addEventListener('change', function() {
+  const ncObject = {};
+  ncObject[EXCLUDE_NEEDS_WORK] = this.checked;
+  chrome.storage.local.set(ncObject);
+});
+
+chrome.storage.local.get(null, function(values) {
   if (values[LAST_CHECKED]) {
     const formatTime = Math.ceil((Date.now() - values[LAST_CHECKED]) / 60000);
     document.getElementById('lastCheck').innerHTML = `Last run: ${formatTime} minute(s) ago`;
   }
+
+  needsWork.checked = values[EXCLUDE_NEEDS_WORK];
 });
 
 const save = document.getElementById('save');

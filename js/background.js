@@ -1,7 +1,9 @@
 const FONT = 'Lucida Sans Unicode, sans-serif';
 const PATH = '/rest/api/1.0/dashboard/pull-requests?state=open&role=reviewer';
+const EXCLUDE_NEEDS_WORK_POSTFIX = '&participantStatus=unapproved';
 const SERVER_KEY = 'bbpr-server';
 const LAST_CHECKED = 'bbpr-last';
+const EXCLUDE_NEEDS_WORK = 'exclude-needs-work';
 
 const OPEN = {
   bg: 'rgba(255, 70, 70, 255)',
@@ -108,13 +110,12 @@ function reportState(text, icon) {
 }
 
 function onPoll() {
-  chrome.storage.local.get(SERVER_KEY, function(values) {
-    if (values.hasOwnProperty(SERVER_KEY)) {
-      const serverUrl = values[SERVER_KEY];
-      if (serverUrl && serverUrl.trim().length > 0) {
-        doRequest(`${serverUrl.trim()}${PATH}`);
-        return;
-      }
+  chrome.storage.local.get(null, function(values) {
+    const serverUrl = values.hasOwnProperty(SERVER_KEY) && values[SERVER_KEY].trim();
+    const excludeNeedsWork = values.hasOwnProperty(EXCLUDE_NEEDS_WORK) && values[EXCLUDE_NEEDS_WORK];
+
+    if (serverUrl && serverUrl.length > 0) {
+      doRequest(`${serverUrl}${PATH}${excludeNeedsWork ? EXCLUDE_NEEDS_WORK_POSTFIX : ''}`);
     }
 
     reportState(`server url is bad or not defined`, '?(');
@@ -126,6 +127,10 @@ chrome.runtime.onStartup.addListener(onPoll);
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
   if (SERVER_KEY in changes) {
+    onPoll();
+  }
+
+  if (EXCLUDE_NEEDS_WORK in changes) {
     onPoll();
   }
 });
