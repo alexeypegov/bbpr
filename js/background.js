@@ -4,16 +4,29 @@ const EXCLUDE_NEEDS_WORK_POSTFIX = '&participantStatus=unapproved';
 const SERVER_KEY = 'bbpr-server';
 const LAST_CHECKED = 'bbpr-last';
 const EXCLUDE_NEEDS_WORK = 'exclude-needs-work';
+const LAST_VALUE = 'bbpr-value';
 
 const OPEN = {
-  bg: 'rgba(255, 70, 70, 255)',
-  text: 'rgba(255, 255, 255, 255)'
+  bg: 'rgba(255, 70, 70, 255)'
 };
 
 const EMPTY = {
-  bg: 'rgba(100, 100, 100, 255)',
-  text: 'rgba(255, 255, 255, 255)'
+  bg: 'rgba(100, 100, 100, 255)'
 };
+
+const OFFLINE = {
+  bg: 'rgba(150, 150, 150, 255)'
+};
+
+function write(key, value, callback) {
+  const obj = {};
+  obj[key] = value;
+  chrome.storage.local.set(obj, callback);
+}
+
+function read(keys, callback) {
+  chrome.storage.local.get(keys, callback);
+}
 
 function drawIcon(text, size, colors) {
   const canvas = document.createElement('canvas');
@@ -47,7 +60,7 @@ function drawIcon(text, size, colors) {
     metrics = ctx.measureText(text);
   }
 
-  ctx.fillStyle = colors.text;
+  ctx.fillStyle = colors.text || '#fff';
   ctx.textBaseline = 'middle';
 
   const x = Math.floor(size / 2 - metrics.width / 2) + 0.5;
@@ -71,24 +84,20 @@ function doRequest(url) {
       if (this.status === 200) {
         const json = JSON.parse(this.responseText);
         if (json.hasOwnProperty('size')) {
-          const num_of_prs = json['size'];
-          reportState(`${num_of_prs} open PR(s)`);
-          updateIcon(num_of_prs, num_of_prs === 0 ? EMPTY : OPEN);
-        } else {
-          reportState(0, 'No Open PRs');
+          write(LAST_VALUE, json['size']);
         }
+
+        reportState('Online');
       } else {
-        reportState(`something went wrong, status = ${this.status}`, ':P');
+        reportState(`Online, but broken: status = ${this.status}`, OFFLINE);
       }
 
-      const lastRun = {};
-      lastRun[LAST_CHECKED] = Date.now();
-      chrome.storage.local.set(lastRun);
+      write(LAST_CHECKED, Date.now());
     }
   };
 
   xhr.onerror = function() {
-    reportState(`unable to execute the request`, 'X(');
+    reportState('Offline: error executing request', OFFLINE);
   };
 
   xhr.withCredentials = true;
@@ -97,20 +106,26 @@ function doRequest(url) {
   try {
     xhr.send();
   } catch(e) {
-    reportState(e.message, ':(');
+    reportState(`Offline: ${e.message}`, OFFLINE);
   }
 }
 
-function reportState(text, icon) {
-  chrome.browserAction.setTitle({
-    title: text
-  });
+function reportState(msg, style) {
+  read(null, function(values) {
+    const count = values.hasOwnProperty(LAST_VALUE) && values[LAST_VALUE] || 0;
+    const lastChecked = values.hasOwnProperty(LAST_CHECKED) && values[LAST_CHECKED] || 0;
+    const mins = Math.ceil((Date.now() - lastChecked) / 60000);
 
-  icon && updateIcon(icon, EMPTY);
+    chrome.browserAction.setTitle({
+      title: `${msg}, last checked: ${mins} min(s) ago`
+    });
+
+    updateIcon(count, style || count && OPEN || EMPTY);
+  });
 }
 
 function onPoll() {
-  chrome.storage.local.get(null, function(values) {
+  read(null, function(values) {
     const serverUrl = values.hasOwnProperty(SERVER_KEY) && values[SERVER_KEY].trim();
     const excludeNeedsWork = values.hasOwnProperty(EXCLUDE_NEEDS_WORK) && values[EXCLUDE_NEEDS_WORK];
 
@@ -119,7 +134,7 @@ function onPoll() {
       return;
     }
 
-    reportState(`server url is bad or not defined`, '?(');
+    reportState('Offline: server url is bad or not defined', OFFLINE);
   });
 }
 
@@ -137,7 +152,7 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 });
 
 chrome.browserAction.onClicked.addListener(function(tab) {
-  chrome.storage.local.get(SERVER_KEY, function(values) {
+  read(SERVER_KEY, function(values) {
     const url = values[SERVER_KEY];
     if (url && url.trim().length > 0) {
       chrome.tabs.create({url: url});
