@@ -155,7 +155,13 @@ chrome.browserAction.onClicked.addListener(function(tab) {
   read(SERVER_KEY, function(values) {
     const url = values[SERVER_KEY];
     if (url && url.trim().length > 0) {
-      chrome.tabs.create({url: url});
+      chrome.tabs.query({pinned: false, active: true, currentWindow: true}, function(tabs) {
+        if (tabs.length === 1 && !tabs[0].hasOwnProperty('url')) {
+          chrome.tabs.update(tabs[0].id, {url: url});
+        } else {
+          chrome.tabs.create({url: url});
+        }
+      });
     }
   });
 });
